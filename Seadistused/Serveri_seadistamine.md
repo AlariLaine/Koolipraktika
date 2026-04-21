@@ -21,7 +21,6 @@ Vali Manual Configuration.
 Vali ainult esimene ketas ja tee sellest RAID 0.
 Vali ainult teine ketas ja tee sellest teine RAID 0.
 Nii on sul kaks "Virtual Drive'i", kus kummaski on üks füüsiline ketas. Süsteemi jaoks on see sisuliselt sama, mis JBOD ja sa saad kasutada ZFS-i.
-<code style="color : red">text</code>
 <img width="512" height="384" alt="Raid2" src="https://github.com/user-attachments/assets/690807ed-981c-4f42-83ff-3f0462f72e92" /><br>
 <img width="512" height="384" alt="Raid" src="https://github.com/user-attachments/assets/a4a27824-9395-40b8-91b5-f57773fe0f77" /><br>
 <img width="512" height="384" alt="Raid1" src="https://github.com/user-attachments/assets/dbccfc70-f898-4036-a7db-c00d4bdf4436" /><br>
