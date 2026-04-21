@@ -44,3 +44,6 @@ Cloud<br>
 | **30** | SERVERID | `172.21.30.0/28` | `172.21.30.1` | VM-id, DHCP server, Veeb |
 | **100** | HOST | `172.21.100.0/28` | `172.21.100.1` | Füüsiline Proxmox server |
 | **200** | WIFI | `172.21.200.0/28` | `172.21.200.1` | Külaliste seadmed |
+
+
+<img width="641" height="506" alt="image" src="https://github.com/user-attachments/assets/de25ae5a-7589-4dd7-be87-d85c5964916c" />
