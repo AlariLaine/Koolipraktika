@@ -34,7 +34,7 @@ Peale laadimist peab ka endale vastavalt konfigureerima. Esimesel lehel vajuta "
 <img width="4096" height="3072" alt="Prox" src="https://github.com/user-attachments/assets/bcb32251-f847-4d0a-8536-6e76805256e4" /> 
 
 Teisel paneelil enne kui next vajutada tuleb valida ZFS(RAID1), ja nüüd võib next vajutada.
-<img width="1024" height="768" alt="Prox1" src="https://github.com/user-attachments/assets/3dd09485-f6e0-4957-8215-97a08c1cb0dc" />
+<img width="512" height="384" alt="Prox1" src="https://github.com/user-attachments/assets/3dd09485-f6e0-4957-8215-97a08c1cb0dc" />
 <img width="4096" height="3072" alt="Prox2" src="https://github.com/user-attachments/assets/605fd4bd-dbb4-4d05-ad95-f0f7b0862d2f" />
 
 Järgmisel lehel tuleb valida, kus elad, mis ajavöönd ja klaviatuuri paigutus.
