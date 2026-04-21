@@ -50,7 +50,7 @@ Hostname: alari.hkhk.edu.ee
 IP address: 192.168.30.213 /24
 Gateway: 192.168.30.1
 DNS Server: 8.8.8.8
-✅Pin network interface names
+✅Pin network interface names.
 <img width="512" height="384" alt="Prox5" src="https://github.com/user-attachments/assets/3f82b6e8-71de-4553-9384-5a07148a61d2" />
 
 Võib vajutada next. Viimasel lehel kontrolli veel viimast korda üle, kas kõik tundub õige ja võid vajutada install.
