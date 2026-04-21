@@ -42,12 +42,12 @@ Järgmisel lehel tuleb valida, kus elad, mis ajavöönd ja klaviatuuri paigutus.
 
 Järgmisel lehel loo endale parool, seda ära kellegagi jaga ning kirjuta email kuhu sa tahad, et teated tuleksid, vajuta next.
 <img width="512" height="384" alt="Prox4" src="https://github.com/user-attachments/assets/4aeec079-d45c-404c-9362-e24fac461681" />
-Eeliviimasel lehel panin ma järgnevalt: 
-Hostname: alari.hkhk.edu.ee
-IP address: 192.168.30.213 /24
-Gateway: 192.168.30.1
-DNS Server: 8.8.8.8
-✅Pin network interface names.
+Eeliviimasel lehel panin ma järgnevalt: <br>
+Hostname: alari.hkhk.edu.ee<br>
+IP address: 192.168.30.213 /24<br>
+Gateway: 192.168.30.1<br>
+DNS Server: 8.8.8.8<br>
+✅Pin network interface names.<br>
 <img width="512" height="384" alt="Prox5" src="https://github.com/user-attachments/assets/3f82b6e8-71de-4553-9384-5a07148a61d2" />
 
 Võib vajutada next. Viimasel lehel kontrolli veel viimast korda üle, kas kõik tundub õige ja võid vajutada install.
