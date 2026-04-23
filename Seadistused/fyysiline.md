@@ -44,18 +44,18 @@ Füüsiline ühendus:
 
 | Seade ja Port        | Ühendub seadmega ja pordiga | Kaabli tüüp | Märkused                         |
 | -------------------- | --------------------------- | ----------- | -------------------------------- |
-| Ruuter (R5) G0/0     | Koolivõrk / Internet        | Ethernet    | WAN ühendus                      |
-| Ruuter (R5) G0/1     | Switch (SW51) G0/1          | Ethernet    | **Trunk (VLAN 1,10,30,100,200)** |
-| Switch (SW51) Fa0/1  | Proxmox server              | Ethernet    | VLAN 100                         |
-| Switch (SW51) Fa0/2  | VM server                   | Ethernet    | VLAN 30                          |
-| Switch (SW51) Fa0/10 | Kontori PC                  | Ethernet    | VLAN 10                          |
-| Switch (SW51) Fa0/20 | WiFi Access Point           | Ethernet    | VLAN 200                         |
+| Ruuter (R5) G0/0     | Koolivõrk / Internet        | Ethernet    | Lan ühendus                      |
+| Ruuter (R5) G0/1     | Switch (SW51) Gig0/2        | Ethernet    | **Trunk (VLAN 1,10,30,100,200)** |
+| Switch (SW51) Gig1/0/1  | Proxmox server           | Ethernet    | VLAN 100                         |
+| Switch (SW51)        | VM server                   | Ethernet    | VLAN 30                          |
+| Switch (SW51)        | Kontori PC                  | Ethernet    | VLAN 10                          |
+| Switch (SW51)        | WiFi Access Point           | Ethernet    | VLAN 200                         |
 
 ---
 
 ## Loogiline ülesehitus (VLAN ja IP)
 
-| VLAN | Nimi     | Alamvõrk        | Gateway      | Kirjeldus            |
+| VLAN | Nimi     | Võrk            | Gateway      | Kirjeldus            |
 | ---- | -------- | --------------- | ------------ | -------------------- |
 | 1    | HALDUS   | 172.21.1.0/28   | 172.21.1.1   | Võrguseadmete haldus |
 | 10   | KONTOR   | 172.21.10.0/28  | 172.21.10.1  | Töötajate arvutid    |
@@ -65,27 +65,32 @@ Füüsiline ühendus:
 
 ---
 
-## NAT ja teenuste avalikustamine
+## Aadressid ja ligipääsud
 
-Kõik teenused on väljast kättesaadavad läbi ruuteri WAN IP aadressi:
 
-**192.168.30.212**
+| Teenus | Sise-IP | Väline port | Ligipääsu aadress | Märkused |
+| :--- | :--- | :--- | :--- | :--- |
+| **Proxmox Web (Avalik)** | 172.21.100.2 | 8011 | [https://hkhk.edu.ee](https://hkhk.edu.ee) | Ligipääs kodust (Kooli IT suunatud) |
+| **Proxmox Web (NAT)** | 172.21.100.2 | 8011 | `https://192.168.30.212:8011` | Vajab kliendi tulemüüri väljalülitamist |
+| **Proxmox Web (Otse)** | 172.21.100.2 | 8006 | `https://192.168.30.213:8006` | Töötab alati (ei läbi NAT-i) |
+| **Proxmox SSH** | 172.21.100.2 | 2200 | `ssh -p 2200 root@192.168.30.212` | Testimiseks läbi Cisco NAT-i |
+| **Windows SRV 1** | 172.21.30.3 | 3389 | `192.168.30.212:3389` | RDP (Vajab Windows VM-i) |
+| **Linux SRV** | 172.21.30.5 | 2201 | `ssh -p 2201 kasutaja@192.168.30.212` | SSH suunamine läbi R5 |
+| **Switch** | 172.21.1.2 | 2203 | `ssh -p 2203 admin@192.168.30.212` | Haldusvõrgu ligipääs |
 
-| Teenus        | Sise-IP      | Siseport | Väline port | Ligipääs                        |
-| ------------- | ------------ | -------- | ----------- | ------------------------------- |
-| Proxmox Web   | 172.21.100.2 | 8006     | 8006        | https://192.168.30.212:8006     |
-| Proxmox SSH   | 172.21.100.2 | 22       | 2200        | ssh -p 2200 root@192.168.30.212 |
-| Windows SRV 1 | 172.21.30.3  | 3389     | 3389        | RDP                             |
-| Windows SRV 2 | 172.21.30.4  | 3389     | 3390        | RDP                             |
-| Linux SRV     | 172.21.30.5  | 22       | 2201        | SSH                             |
-| Switch        | 172.21.1.2   | 22       | 2203        | SSH                             |
-| Veebiserver   | 172.21.30.10 | 80       | 80          | HTTP                            |
+## Tehniline teostus ja märkused
+
+Testimise käigus selgus, et ühendus läbi ruuteri välisliidese (.212) on piiratud kliendi arvuti turvaseadete tõttu.
+
+### Miks .212 vajab tulemüüri väljalülitamist?
+
+*   **NAT ja asümmeetria:** Kuna päring liigub läbi Cisco ruuteri NAT-i, siis vastuspakett jõuab kliendi arvutini teistsuguse teekonnaga kui tavaline sisevõrgu liiklus.
+*   **Windows Defender:** Windowsi tulemüür peab sellist NAT-itud tagasiliiklust tundmatuks ja blokeerib selle vaikimisi ära (asümmeetriline marsruutimine).
+*   **Lahendus:** Praktikas tõestati ühenduse toimivust Wiresharki logidega (3-way handshake kinnitus) ja kliendi tulemüüri ajutise keelamisega.
 
 ---
 
-## Tulemüür (Firewall)
-
-Ruuteril on aktiveeritud stateful tulemüür (inspect).
+## Testimine
 
 Testimise käigus ilmnes probleem:
 
@@ -94,7 +99,7 @@ Testimise käigus ilmnes probleem:
 * kuid vastus ei jõudnud kliendini
 
 Põhjus:
-👉 tulemüür blokeeris tagasiliikluse
+* tulemüür blokeeris tagasiliikluse
 
 Ajutine lahendus:
 
@@ -105,28 +110,3 @@ Lõplik lahendus:
 * tulemüüri reegleid tuleb kohandada, et lubada NAT-itud ühenduste tagasiliiklus
 
 ---
-
-## Olulised erinevused simulatsiooniga
-
-* Packet Tracer ei simuleeri realistlikult tulemüüri käitumist
-* NAT töötab lihtsustatud kujul
-* puuduvad reaalsed võrgupiirangud (ACL, inspect, security policies)
-
-Seetõttu töötas simulatsioon probleemideta, kuid füüsilises võrgus tuli lahendada tulemüüri konfiguratsiooniga seotud probleem.
-
----
-
-## Kokkuvõte
-
-Füüsiline lahendus järgib sama loogikat nagu simulatsioon:
-
-* VLAN segmentatsioon
-* Router-on-a-stick lahendus
-* NAT port forwarding
-
-Lisaks sisaldab:
-
-* reaalselt toimivat tulemüüri
-* korrektset liikluse kontrolli
-
-Peamine probleem tekkis tulemüüri konfiguratsioonist, mitte võrgu loogikast.
