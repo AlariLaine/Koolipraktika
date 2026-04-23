@@ -71,15 +71,12 @@ Simulatsioon sobib loogika testimiseks, kuid ei pruugi paljastada:
 * firewalli probleeme
 * NAT + firewall koosmõju
 * turvapoliitikate mõju liiklusele
-### Märkused topoloogia kohta
+### Lisaks topoloogia kohta
 
 * Cisco Packet Tracer simulatsioonis on "Cloud" kasutatud lihtsustatud kujul ning ei kajasta reaalse võrgu keerukust
 * Tegelikus lahenduses toimub kogu välisühendus läbi ruuteri (NAT + firewall)
 * Switch ei ole otse ühendatud välisvõrguga
 * Kõik välised teenused on kättesaadavad läbi ruuteri IP aadressi (192.168.30.212)
-
-Lisaks:
-
 * Ruuter teostab nii NAT-i kui ka tulemüüri funktsiooni
 * Firewall konfiguratsioon mõjutas ühenduste toimimist reaalses keskkonnas
 
