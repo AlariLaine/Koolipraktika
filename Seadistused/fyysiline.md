@@ -70,7 +70,7 @@ Füüsiline ühendus:
 
 | Teenus | Sise-IP | Väline port | Ligipääsu aadress | Märkused |
 | :--- | :--- | :--- | :--- | :--- |
-| **Proxmox Web (Avalik)** | 172.21.100.2 | 8011 | [https://hkhk.edu.ee](https://hkhk.edu.ee) | Ligipääs kodust (Kooli IT suunatud) |
+| **Proxmox Web (Avalik)** | 172.21.100.2 | 8011 | [https://hkhk.edu.ee](https://hkhk.edu.ee) | Ligipääs kodust  |
 | **Proxmox Web (NAT)** | 172.21.100.2 | 8011 | `https://192.168.30.212:8011` | Vajab kliendi tulemüüri väljalülitamist |
 | **Proxmox Web (Otse)** | 172.21.100.2 | 8006 | `https://192.168.30.213:8006` | Töötab alati (ei läbi NAT-i) |
 | **Proxmox SSH** | 172.21.100.2 | 2200 | `ssh -p 2200 root@192.168.30.212` | Testimiseks läbi Cisco NAT-i |
@@ -87,6 +87,7 @@ Testimise käigus selgus, et ühendus läbi ruuteri välisliidese (.212) on piir
 *   **NAT ja asümmeetria:** Kuna päring liigub läbi Cisco ruuteri NAT-i, siis vastuspakett jõuab kliendi arvutini teistsuguse teekonnaga kui tavaline sisevõrgu liiklus.
 *   **Windows Defender:** Windowsi tulemüür peab sellist NAT-itud tagasiliiklust tundmatuks ja blokeerib selle vaikimisi ära (asümmeetriline marsruutimine).
 *   **Lahendus:** Praktikas tõestati ühenduse toimivust Wiresharki logidega (3-way handshake kinnitus) ja kliendi tulemüüri ajutise keelamisega.
+<img width="1901" height="1071" alt="Screenshot 2026-04-23 132814" src="https://github.com/user-attachments/assets/abfd2969-c55e-4e48-ac5d-14e67b6b4dfe" />
 
 ---
 
