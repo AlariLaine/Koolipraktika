@@ -1,5 +1,16 @@
 # Füüsiline võrgulahendus
 
+## Komponendid
+Cisco 2960 switch
+
+Cisco 1941 ruuter
+
+Minu läpakas
+
+Proxmox server
+
+Kooliarvuti
+
 ## Ülevaade
 
 Füüsiline võrgulahendus põhineb samal loogikal nagu Cisco Packet Tracer simulatsioon, kuid arvestab reaalse võrgu eripärasid nagu NAT, tulemüür ja seadmete tegelik käitumine.
