@@ -48,4 +48,38 @@ Cloud<br>
 
 <img width="641" height="506" alt="image" src="https://github.com/user-attachments/assets/de25ae5a-7589-4dd7-be87-d85c5964916c" />
 
-pooleli...
+### Simulatsiooni ja reaalse võrgu erinevused
+
+Kuigi Cisco Packet Tracer simulatsioon töötas probleemideta, ilmnes reaalses keskkonnas viga.
+
+Peamised erinevused:
+
+* Packet Tracer ei simuleeri realistlikult stateful firewalli käitumist
+* NAT töötab lihtsustatud kujul (puudub ühenduste jälgimine)
+* Puuduvad vahepealsed võrguseadmed (nt tulemüürid, turvapoliitikad)
+* Tagasitee (return traffic) filtreerimist ei modelleerita
+
+Seetõttu:
+
+* simulatsioonis töötas ühendus (SYN → SYN-ACK)
+* reaalses võrgus blokeeris ruuteri firewall tagasiliikluse
+
+### Järeldus
+
+Simulatsioon sobib loogika testimiseks, kuid ei pruugi paljastada:
+
+* firewalli probleeme
+* NAT + firewall koosmõju
+* turvapoliitikate mõju liiklusele
+### Märkused topoloogia kohta
+
+* Cisco Packet Tracer simulatsioonis on "Cloud" kasutatud lihtsustatud kujul ning ei kajasta reaalse võrgu keerukust
+* Tegelikus lahenduses toimub kogu välisühendus läbi ruuteri (NAT + firewall)
+* Switch ei ole otse ühendatud välisvõrguga
+* Kõik välised teenused on kättesaadavad läbi ruuteri IP aadressi (192.168.30.212)
+
+Lisaks:
+
+* Ruuter teostab nii NAT-i kui ka tulemüüri funktsiooni
+* Firewall konfiguratsioon mõjutas ühenduste toimimist reaalses keskkonnas
+
