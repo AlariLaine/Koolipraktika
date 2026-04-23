@@ -76,11 +76,15 @@ Füüsiline ühendus:
 | **Proxmox SSH** | 172.21.100.2 | 2200 | `ssh -p 2200 root@192.168.30.212` | Testimiseks läbi Cisco NAT-i |
 | **Windows SRV 1** | 172.21.30.3 | 3389 | `192.168.30.212:3389` | RDP (Vajab Windows VM-i) |
 | **Linux SRV** | 172.21.30.5 | 2201 | `ssh -p 2201 kasutaja@192.168.30.212` | SSH suunamine läbi R5 |
-| **Switch** | 172.21.1.2 | 2203 | `ssh -p 2203 admin@192.168.30.212` | Haldusvõrgu ligipääs |
+| **Switch** | 172.21.1.2 | 2203 | `ssh -p 2203 root@192.168.30.212` | Haldusvõrgu ligipääs |
 
 ## Tehniline teostus ja märkused
 
-Testimise käigus selgus, et ühendus läbi ruuteri välisliidese (.212) on piiratud kliendi arvuti turvaseadete tõttu.
+## Switch SSH (Port 2203) testimine:
+Sisevõrgu test: Ruuterist (R5) SSH-ühendus kommutaatorisse (172.21.1.2) õnnestus, mis kinnitab SSH-teenuse ja lüüsi (default-gateway) korrektset seadistust.
+* NAT-i test: Ruuteri debug ip nat kinnitab, et välisvõrgust porti 2203 tulnud päringud suunatakse edukalt kommutaatorisse.
+* Märkus: Otsest SSH sessiooni kliendi arvutist piirab koolivõrgu turvapoliitika, mis katkestab sessiooni pärast TCP kätlemist (sarnane pveproxy käitumisega).
+* Testimise käigus selgus, et ühendus läbi ruuteri välisliidese (.212) on piiratud kliendi arvuti turvaseadete tõttu.
 
 ### Miks .212 vajab tulemüüri väljalülitamist?
 
