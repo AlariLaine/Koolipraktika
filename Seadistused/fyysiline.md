@@ -228,7 +228,9 @@ end`
 ## Switchi config
 </details>
 ```
+
 ---
+
 ## Switchi config
 <details>
   <summary>Siin on kood</summary>
@@ -356,4 +358,3 @@ line vty 5 15
 end
 ```
 </details>
----
