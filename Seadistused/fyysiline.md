@@ -83,35 +83,291 @@ Füüsiline ühendus:
 ## Switch SSH (Port 2203) testimine:
 Sisevõrgu test: Ruuterist (R5) SSH-ühendus kommutaatorisse (172.21.1.2) õnnestus, mis kinnitab SSH-teenuse ja lüüsi (default-gateway) korrektset seadistust.
 * NAT-i test: Ruuteri debug ip nat kinnitab, et välisvõrgust porti 2203 tulnud päringud suunatakse edukalt kommutaatorisse.
-* Märkus: Otsest SSH sessiooni kliendi arvutist piirab koolivõrgu turvapoliitika, mis katkestab sessiooni pärast TCP kätlemist (sarnane pveproxy käitumisega).
-* Testimise käigus selgus, et ühendus läbi ruuteri välisliidese (.212) on piiratud kliendi arvuti turvaseadete tõttu.
-
-### Miks .212 vajab tulemüüri väljalülitamist?
-
-*   **NAT ja asümmeetria:** Kuna päring liigub läbi Cisco ruuteri NAT-i, siis vastuspakett jõuab kliendi arvutini teistsuguse teekonnaga kui tavaline sisevõrgu liiklus.
-*   **Windows Defender:** Windowsi tulemüür peab sellist NAT-itud tagasiliiklust tundmatuks ja blokeerib selle vaikimisi ära (asümmeetriline marsruutimine).
-*   **Lahendus:** Praktikas tõestati ühenduse toimivust Wiresharki logidega (3-way handshake kinnitus) ja kliendi tulemüüri ajutise keelamisega.
-<img width="1901" height="1071" alt="Screenshot 2026-04-23 132814" src="https://github.com/user-attachments/assets/abfd2969-c55e-4e48-ac5d-14e67b6b4dfe" />
+* Märkus: Otsest SSH sessiooni kliendi arvutist peab kasutama porti 2203.
 
 ---
+---
+## Ruuteri config
 
-## Testimine
+`R5#show run
+Building configuration...
 
-Testimise käigus ilmnes probleem:
+Current configuration : 3120 bytes
 
-* TCP SYN paketid jõudsid serverini
-* server vastas
-* kuid vastus ei jõudnud kliendini
+ Last configuration change at 08:15:44 UTC Fri Apr 24 2026 by root
+version 15.2
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
 
-Põhjus:
-* tulemüür blokeeris tagasiliikluse
+hostname R5
 
-Ajutine lahendus:
+boot-start-marker
+boot-end-marker
 
-* tulemüür keelati → ühendus töötas
+no aaa new-model
+memory-size iomem 15
 
-Lõplik lahendus:
+ip cef
 
-* tulemüüri reegleid tuleb kohandada, et lubada NAT-itud ühenduste tagasiliiklus
+ip domain name alari.hkhk.edu.ee
+no ipv6 cef
+multilink bundle-name authenticated
+
+license udi pid CISCO1941/K9 sn FCZ17379124
+
+username root privilege 15 secret 4 poRtFJyHWx67i5jN3K2.F42XsI9MrKrK8k0X0SwEVy6
+
+ip ssh version 2
+
+interface Embedded-Service-Engine0/0
+ no ip address
+ shutdown
+
+interface GigabitEthernet0/0
+ ip address 192.168.30.212 255.255.255.0
+ ip nat outside
+ ip virtual-reassembly in
+ duplex auto
+ speed auto
+
+interface GigabitEthernet0/1
+ no ip address
+ ip nat inside
+ ip virtual-reassembly in
+ duplex auto
+ speed auto
+
+interface GigabitEthernet0/1.1
+ encapsulation dot1Q 1 native
+ ip address 172.21.1.1 255.255.255.240
+ ip nat inside
+ ip virtual-reassembly in
+
+interface GigabitEthernet0/1.10
+ description Kontor
+ encapsulation dot1Q 10
+ ip address 172.21.10.1 255.255.255.240
+ ip helper-address 172.21.30.2
+
+interface GigabitEthernet0/1.30
+ description V-serverid
+ encapsulation dot1Q 30
+ ip address 172.21.30.1 255.255.255.240
+
+interface GigabitEthernet0/1.100
+ description Host
+ encapsulation dot1Q 100
+ ip address 172.21.100.1 255.255.255.240
+ ip nat inside
+ ip virtual-reassembly in
+
+interface GigabitEthernet0/1.200
+ description Guest
+ encapsulation dot1Q 200
+ ip address 172.21.200.1 255.255.255.240
+
+interface Serial0/0/0
+ no ip address
+ shutdown
+ clock rate 2000000
+
+interface Serial0/0/1
+ no ip address
+ shutdown
+ clock rate 2000000
+
+ip default-gateway 192.168.30.1
+ip forward-protocol nd
+
+no ip http server
+no ip http secure-server
+
+ip nat inside source list 1 interface GigabitEthernet0/0 overload
+ip nat inside source static tcp 172.21.30.10 80 192.168.30.212 80 extendable
+ip nat inside source static tcp 172.21.100.2 22 192.168.30.212 2200 extendable
+ip nat inside source static tcp 172.21.30.5 22 192.168.30.212 2201 extendable
+ip nat inside source static tcp 172.21.30.6 22 192.168.30.212 2202 extendable
+ip nat inside source static tcp 172.21.1.2 22 192.168.30.212 2203 extendable
+ip nat inside source static tcp 172.21.30.3 3389 192.168.30.212 3389 extendable
+ip nat inside source static tcp 172.21.30.4 3389 192.168.30.212 3390 extendable
+ip nat inside source static tcp 172.21.100.2 8006 192.168.30.212 8011 extendable
+ip route 0.0.0.0 0.0.0.0 192.168.30.1
+
+ip access-list extended gig0/1
+ permit tcp any host 192.168.30.212 eq 2203
+
+access-list 1 permit 172.21.0.0 0.0.255.255
+access-list 1 permit 172.21.100.0 0.0.0.15
+access-list 10 permit 192.168.30.0 0.0.0.255
+
+snmp-server community public RO
+snmp-server enable traps entity-sensor threshold
+
+control-plane
+
+line con 0
+line aux 0
+line 2
+ no activation-character
+ no exec
+ transport preferred none
+ transport output pad telnet rlogin lapb-ta mop udptn v120 ssh
+ stopbits 1
+line vty 0 4
+ access-class 10 in
+ login local
+ transport input ssh
+
+scheduler allocate 20000 1000
+
+end`
+
+## Switchi config
+
+<details>
+  <summary>Click to expand</summary>
+`  SW51#show run
+Building configuration...
+
+Current configuration : 2115 bytes
+!
+! Last configuration change at 05:14:24 UTC Thu Mar 31 2011 by root
+! NVRAM config last updated at 06:36:52 UTC Thu Mar 31 2011
+!
+version 15.0
+no service pad
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname SW51
+!
+boot-start-marker
+boot-end-marker
+!
+!
+username root privilege 15 secret 5 $1$1X0O$WWaNEGsyTXJkzbGQl2VOs1
+no aaa new-model
+switch 1 provision ws-c2960s-24ts-l
+!
+!
+ip dhcp snooping vlan 10,30,100,200
+ip dhcp snooping
+ip domain-name alari.hkhk.edu.ee
+!
+!
+!
+spanning-tree mode pvst
+spanning-tree extend system-id
+!
+!
+!
+!
+!
+!
+!
+!
+!
+vlan internal allocation policy ascending
+!
+ip ssh version 2
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface FastEthernet0
+ no ip address
+ shutdown
+!
+interface GigabitEthernet1/0/1
+ switchport access vlan 100
+ switchport mode access
+!
+interface GigabitEthernet1/0/2
+ switchport mode trunk
+ ip dhcp snooping trust
+!
+interface GigabitEthernet1/0/3
+!
+interface GigabitEthernet1/0/4
+!
+interface GigabitEthernet1/0/5
+!
+interface GigabitEthernet1/0/6
+!
+interface GigabitEthernet1/0/7
+!
+interface GigabitEthernet1/0/8
+!
+interface GigabitEthernet1/0/9
+!
+interface GigabitEthernet1/0/10
+ switchport access vlan 10
+ switchport mode access
+!
+interface GigabitEthernet1/0/11
+!
+interface GigabitEthernet1/0/12
+!
+interface GigabitEthernet1/0/13
+!
+interface GigabitEthernet1/0/14
+!
+interface GigabitEthernet1/0/15
+!
+interface GigabitEthernet1/0/16
+!
+interface GigabitEthernet1/0/17
+!
+interface GigabitEthernet1/0/18
+!
+interface GigabitEthernet1/0/19
+!
+interface GigabitEthernet1/0/20
+!
+interface GigabitEthernet1/0/21
+!
+interface GigabitEthernet1/0/22
+!
+interface GigabitEthernet1/0/23
+!
+interface GigabitEthernet1/0/24
+!
+interface GigabitEthernet1/0/25
+!
+interface GigabitEthernet1/0/26
+!
+interface GigabitEthernet1/0/27
+!
+interface GigabitEthernet1/0/28
+!
+interface Vlan1
+ ip address 172.21.1.2 255.255.255.240
+!
+ip default-gateway 172.21.1.1
+ip http server
+ip http secure-server
+!
+!
+snmp-server community public RO
+!
+!
+line con 0
+line vty 0 4
+ login local
+ transport input ssh
+line vty 5 15
+ login local
+ transport input ssh
+!
+end`
+</details>
 
 ---
