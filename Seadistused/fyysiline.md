@@ -86,7 +86,6 @@ Sisevõrgu test: Ruuterist (R5) SSH-ühendus kommutaatorisse (172.21.1.2) õnnes
 * Märkus: Otsest SSH sessiooni kliendi arvutist peab kasutama porti 2203.
 
 ---
----
 ## Ruuteri config
 <details>
   <summary>Siin on kood</summary>
