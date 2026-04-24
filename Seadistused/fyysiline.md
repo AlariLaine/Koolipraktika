@@ -226,9 +226,9 @@ scheduler allocate 20000 1000
 end`
 
 ## Switchi config
-</details>
-```
 
+```
+</details>
 ---
 
 ## Switchi config
