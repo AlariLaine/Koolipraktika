@@ -88,8 +88,11 @@ Sisevõrgu test: Ruuterist (R5) SSH-ühendus kommutaatorisse (172.21.1.2) õnnes
 ---
 ---
 ## Ruuteri config
+<details>
+  <summary>Click to expand</summary>
 
-`R5#show run
+```
+R5#show run
 Building configuration...
 
 Current configuration : 3120 bytes
@@ -224,141 +227,123 @@ scheduler allocate 20000 1000
 end`
 
 ## Switchi config
-
+</details>
+```
 <details>
   <summary>Click to expand</summary>
-`  SW51#show run
+
+```
+SW51#show run
 Building configuration...
 
 Current configuration : 2115 bytes
-!
-! Last configuration change at 05:14:24 UTC Thu Mar 31 2011 by root
-! NVRAM config last updated at 06:36:52 UTC Thu Mar 31 2011
-!
+
+ Last configuration change at 05:14:24 UTC Thu Mar 31 2011 by root
+ NVRAM config last updated at 06:36:52 UTC Thu Mar 31 2011
+
 version 15.0
 no service pad
 service timestamps debug datetime msec
 service timestamps log datetime msec
 no service password-encryption
-!
+
 hostname SW51
-!
+
 boot-start-marker
 boot-end-marker
-!
-!
+
 username root privilege 15 secret 5 $1$1X0O$WWaNEGsyTXJkzbGQl2VOs1
 no aaa new-model
 switch 1 provision ws-c2960s-24ts-l
-!
-!
+
 ip dhcp snooping vlan 10,30,100,200
 ip dhcp snooping
 ip domain-name alari.hkhk.edu.ee
-!
-!
-!
+
 spanning-tree mode pvst
 spanning-tree extend system-id
-!
-!
-!
-!
-!
-!
-!
-!
-!
+
 vlan internal allocation policy ascending
-!
+
 ip ssh version 2
-!
-!
-!
-!
-!
-!
-!
-!
-!
-!
+
 interface FastEthernet0
  no ip address
  shutdown
-!
+
 interface GigabitEthernet1/0/1
  switchport access vlan 100
  switchport mode access
-!
+
 interface GigabitEthernet1/0/2
  switchport mode trunk
  ip dhcp snooping trust
-!
+
 interface GigabitEthernet1/0/3
-!
+
 interface GigabitEthernet1/0/4
-!
+
 interface GigabitEthernet1/0/5
-!
+
 interface GigabitEthernet1/0/6
-!
+
 interface GigabitEthernet1/0/7
-!
+
 interface GigabitEthernet1/0/8
-!
+
 interface GigabitEthernet1/0/9
-!
+
 interface GigabitEthernet1/0/10
  switchport access vlan 10
  switchport mode access
-!
+
 interface GigabitEthernet1/0/11
-!
+
 interface GigabitEthernet1/0/12
-!
+
 interface GigabitEthernet1/0/13
-!
+
 interface GigabitEthernet1/0/14
-!
+
 interface GigabitEthernet1/0/15
-!
+
 interface GigabitEthernet1/0/16
-!
+
 interface GigabitEthernet1/0/17
-!
+
 interface GigabitEthernet1/0/18
-!
+
 interface GigabitEthernet1/0/19
-!
+
 interface GigabitEthernet1/0/20
-!
+
 interface GigabitEthernet1/0/21
-!
+
 interface GigabitEthernet1/0/22
-!
+
 interface GigabitEthernet1/0/23
-!
+
 interface GigabitEthernet1/0/24
-!
+
 interface GigabitEthernet1/0/25
-!
+
 interface GigabitEthernet1/0/26
-!
+
 interface GigabitEthernet1/0/27
-!
+
 interface GigabitEthernet1/0/28
-!
+
 interface Vlan1
  ip address 172.21.1.2 255.255.255.240
-!
+
 ip default-gateway 172.21.1.1
 ip http server
 ip http secure-server
-!
-!
+
+
 snmp-server community public RO
-!
-!
+
+
 line con 0
 line vty 0 4
  login local
@@ -366,8 +351,8 @@ line vty 0 4
 line vty 5 15
  login local
  transport input ssh
-!
-end`
+
+end
+```
 </details>
 
----
