@@ -228,8 +228,8 @@ end`
 ## Switchi config
 
 ```
-</details>
 ---
+</details>
 
 ## Switchi config
 <details>
