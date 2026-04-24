@@ -89,7 +89,7 @@ Sisevõrgu test: Ruuterist (R5) SSH-ühendus kommutaatorisse (172.21.1.2) õnnes
 ---
 ## Ruuteri config
 <details>
-  <summary>Click to expand</summary>
+  <summary>Siin on kood</summary>
 
 ```
 R5#show run
@@ -229,8 +229,10 @@ end`
 ## Switchi config
 </details>
 ```
+---
+## Switchi config
 <details>
-  <summary>Click to expand</summary>
+  <summary>Siin on kood</summary>
 
 ```
 SW51#show run
@@ -355,4 +357,4 @@ line vty 5 15
 end
 ```
 </details>
-
+---
