@@ -41,40 +41,11 @@ See juhend kirjeldab, kuidas seadistada ühiskasutuskaust Proxmoxi hosti ja Wind
 
 
 ## 1.Lisa kaustakaart Proxmoxi veebiliideses
-  Mine Datacenter > Directory Mappings.
-  Klõpsa Add.
-  Määra:
-  Name: VM-Share
-  Path: /home/VMShare
-  Node: [Sõlme nimi]
-  Comment: Ühiskasutuskaust Windowsi VM-ile
-  Klõpsa Create.
+  Mine Datacenter > Directory Mappings. Klõpsa Add. Määra:Name: VM-SharePath: /home/VMShare, Node: [Sõlme nimi], Comment: Ühiskasutuskaust Windowsi VM-ile, Klõpsa Create.
 ## 2. VM riistvaraseadistus
-  Lülita Windowsi VM välja.
-  Mine VM Hardware vahele.
-  Klõpsa Add > Virtiofs.
-  Vali Directory ID rippmenüüst VM-Share.
-  Klõpsa Add.
+  Lülita Windowsi VM välja. Mine VM Hardware vahele. Klõpsa Add > Virtiofs. Vali Directory ID rippmenüüst VM-Share. Klõpsa Add.
 ## 3. Windowsi VM seadistus
-  Paigalda VirtIO Guest Tools
-  Lülita VM sisse.
-  Ava virtio-win.iso failihalduris.
-  Käivita virtio-win-guest-tools.exe.
-  Veendu, et paigaldamise käigus on valitud viofs (Virtio File System) komponent.
-  Paigalda WinFSP
-  Lae alla viimane winfsp-x.x.xxxx.msi aadressilt https://winfsp.dev/rel/.
-  Käivita paigaldaja ja järgi juhiseid.
-  Käivita Virtio-FS teenus
-  Vajuta Win + R, sisesta services.msc ja vajuta Enter.
-  Leia Virtio-FS Service.
-  Määra Startup type väärtuseks Automatic.
-  Klõpsa Start.
+  # Paigalda VirtIO Guest Tools
+  Lülita VM sisse. Ava virtio-win.iso failihalduris. Käivita virtio-win-guest-tools.exe. Veendu, et paigaldamise käigus on valitud viofs (Virtio File System) komponent. Paigalda WinFSP, lae alla viimane winfsp-x.x.xxxx.msi aadressilt https://winfsp.dev/rel/. Käivita paigaldaja ja järgi juhiseid. Käivita Virtio-FS teenusVajuta Win + R, sisesta services.msc ja vajuta Enter. Leia Virtio-FS Service, määra Startup type väärtuseks Automatic. Klõpsa Start.
 ## 4. Juurdepääs ühiskasutuskaustle
-  Ava This PC failihalduris.
-  Ühiskasutuskaust kuvatakse uue võrgukaustana (tavaliselt Z:).
-  Failid, mille kopeerid Proxmoxi hosti kausta /home/VMShare, on kohe saadaval VM-i Z: kettal.
-  Kasutamine
-  Failide ülekandmiseks:
-
-  Kasuta scp või Proxmoxi veebikäsku, et kopeerida faile Proxmoxi hosti kausta /home/VMShare.
-  Pääse nendele failidele kohe ligi Windowsi VM-i Z: kettal.
+Ava "This PC" failihalduris. Ühiskasutuskaust kuvatakse uue võrgukaustana (tavaliselt Z:). Failid, mille kopeerid Proxmoxi hosti kausta /home/VMShare, on kohe saadaval VM-i Z: kettal.KasutamineFailide ülekandmiseks: Kasuta scp, WINSCP või Proxmoxi veebikäsku, et kopeerida faile Proxmoxi hosti kausta /home/VMShare. Pääse nendele failidele kohe ligi Windowsi VM-i (Z): kettal.
