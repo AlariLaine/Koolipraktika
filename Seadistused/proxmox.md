@@ -1,13 +1,13 @@
 # Proxmox VE Virtuaalmasinate Standard (Template)
 
-Kõik labori virtuaalmasinad on loodud järgides ühtset standardit, mis tagab maksimaalse jõudluse ja ühilduvuse Intel Xeon serveri riistvaraga.
+Kõik labori virtuaalmasinad on loodud järgides enam vähem ühtset seadistust.
 
 ## 1. Riistvara konfiguratsiooni standardid
 
 
 | Komponent | Seadistus | Selgitus |
 | :--- | :--- | :--- |
-| **CPU Type** | `host` | Võimaldab VM-il kasutada füüsilise protsessori (Xeon) kõiki käsustikke (AES, AVX jne). |
+| **CPU Type** | `host` | Võimaldab VM-il kasutada füüsilise protsessori kõiki käsustikke (AES, AVX jne). |
 | **Machine** | `q35` | Kaasaegne chipset, mis on vajalik Windows 11 ja PCIe passthrough toe jaoks. |
 | **BIOS** | `OVMF (UEFI)` | Nõutud Windows 11 ja Windows Server 2022 turvaliseks alglaadimiseks. |
 | **SCSI Controller** | `VirtIO SCSI single` | Pakub parimat IOPS jõudlust ja madalat latentsust. |
