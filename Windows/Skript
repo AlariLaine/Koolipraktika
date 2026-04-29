@@ -1,4 +1,72 @@
-tere
+# 1. SEADISTUS - Muuda siin oma domeeni nimi!
+$domainPath = "DC=alari,DC=praktika"
+$csvPath = "C:\kasutajad.csv"
 
-git config --global user.email "alarilaine@gmail.com"
-git config --global user.name "alarilaine"
+# 2. OU STRUKTUURI LOOMINE JA KONTROLL
+# See list on koostatud Sinu antud struktuuri järgi
+$ous = @(
+    "OU=ARVUTID,$domainPath",
+    "OU=Staff,OU=ARVUTID,$domainPath",
+    "OU=Töötajad,OU=ARVUTID,$domainPath",
+    "OU=KASUTAJAD,$domainPath",
+    "OU=IT,OU=KASUTAJAD,$domainPath",
+    "OU=Staff,OU=KASUTAJAD,$domainPath",
+    "OU=Töötajad,OU=KASUTAJAD,$domainPath",
+    "OU=Kontor,OU=KASUTAJAD,$domainPath",
+    "OU=Raamatupidamine,OU=KASUTAJAD,$domainPath"
+)
+
+Write-Host "--- Kontrollin ja loon OU struktuuri ---" -ForegroundColor Cyan
+foreach ($ou in $ous) {
+    if (-not (Get-ADOrganizationalUnit -Filter "DistinguishedName -eq '$ou'" -ErrorAction SilentlyContinue)) {
+        $name = ($ou.Split(',')[0]).Split('=')[1]
+        $path = $ou.Substring($ou.IndexOf(',') + 1)
+        New-ADOrganizationalUnit -Name $name -Path $path
+        Write-Host "Loodi OU: $name" -ForegroundColor Green
+    } else {
+        Write-Host "OU on juba olemas: $ou" -ForegroundColor Gray
+    }
+}
+
+# 3. KASUTAJATE IMPORT CSV FAILIST
+if (Test-Path $csvPath) {
+    $users = Import-Csv $csvPath -Delimiter "," # Kontrolli, kas on koma või semikoolon!
+    
+    Write-Host "`n--- Importin kasutajad ---" -ForegroundColor Cyan
+    foreach ($u in $users) {
+        # Tükeldame täisnime ees- ja perekonnanimeks, et luua eesnimi.perenimi tunnus
+        $nameParts = $u.Name.Split(' ')
+        $firstName = $nameParts[0]
+        $lastName = $nameParts[1]
+        $samName = "$($firstName).$($lastName)".ToLower()
+        
+        # Määrame siht-OU (Sinu CSV-s on veerg OU nimega 'IT', 'Staff' jne)
+        $targetOU = "OU=$($u.OU),OU=KASUTAJAD,$domainPath"
+        
+        # Kontrollime uuesti, kas siht-OU on olemas (nõutud ülesandes)
+        if (Get-ADOrganizationalUnit -Filter "DistinguishedName -eq '$targetOU'" -ErrorAction SilentlyContinue) {
+            
+            # Kontrollime, kas kasutaja on juba olemas
+            if (-not (Get-ADUser -Filter "SamAccountName -eq '$samName'" -ErrorAction SilentlyContinue)) {
+                
+                $securePass = ConvertTo-SecureString $u.Password -AsPlainText -Force
+                
+                New-ADUser -Name $u.Name `
+                           -SamAccountName $samName `
+                           -UserPrincipalName "$samName@$($domainPath.Replace('DC=','').Replace(',', '.'))" `
+                           -AccountPassword $securePass `
+                           -Path $targetOU `
+                           -Enabled $true `
+                           -ChangePasswordAtLogon $true
+                
+                Write-Host "Kasutaja $samName loodi OU-sse $($u.OU)" -ForegroundColor Green
+            } else {
+                Write-Host "Kasutaja $samName on juba olemas, jääb vahele." -ForegroundColor Yellow
+            }
+        } else {
+            Write-Warning "VIGA: OU-d $targetOU ei leitud! Kasutajat $($u.Name) ei loodud."
+        }
+    }
+} else {
+    Write-Error "CSV faili ei leitud asukohast $csvPath"
+}
