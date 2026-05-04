@@ -99,5 +99,6 @@ Kõik seadistused on testitud Windows 11 kliendi masinas.
 * Käsk gpupdate /force rakendab reeglid koheselt.
 * Arvuti taaskäivitus kinnitab tarkvara paigalduse ja sisselogimise muudatused.
 
+<img width="1283" height="868" alt="image" src="https://github.com/user-attachments/assets/9acd73b8-eab0-4922-90a4-3132c23cb0cb" />
 
 
