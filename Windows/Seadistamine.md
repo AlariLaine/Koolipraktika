@@ -33,25 +33,25 @@ Esimene klientmasin (**Klient1**) sai edukalt domeeni liidetud:
 ## 5. Group Policy (GPO)
 
 ## Windows Serveri haldus: Kasutajate import, GPO ja võrguseadistus
-Käesolev dokumentatsioon kirjeldab minu poolt teostatud Windows Serveri keskkonna seadistamist. Projekti eesmärk oli automatiseerida kasutajate loomine, seadistada tsentraalne tarkvara paigaldus läbi grupipoliitikate (GPO) ja tagada turvaline võrgupääs.
-## 1. Kasutajate ja struktuuri (OU) automatiseeritud import
-Esmalt lõin PowerShell skripti, mis loob vajaliku organisatsiooniüksuste (OU) struktuuri ja impordib kasutajad CSV-failist.
-## Teostatud sammud:
 
-   1. OU struktuuri loomine: Lõin hierarhia ARVUTID ja KASUTAJAD koos vajalike alamüksustega (IT, Staff, Töötajad, Kontor, Raamatupidamine).
+### 1. Kasutajate ja struktuuri (OU) automatiseeritud import
+Kõigepealt tegin PowerShell skripti, mis loob vajaliku organisatsiooniüksuste (OU) struktuuri ja impordib kasutajad CSV-failist.
+### Teostatud sammud:
+
+   1. OU struktuuri loomine: tegin grupid ARVUTID ja KASUTAJAD koos vajalike alamüksustega (IT, Staff, Töötajad, Kontor, Raamatupidamine).
    2. Kasutajate import: Kirjutasin skripti, mis loeb kasutajad.csv faili ja loob kasutajad kujul eesnimi.perenimi.
    3. Gruppide haldus: Skript kontrollib automaatselt OU olemasolu enne kasutaja loomist ja lisab kasutaja vastavasse üksusesse.
 
-# Kasutatud loogika näide
+## Kasutatud loogika näide
 $samName = "$($firstName).$($lastName)".ToLower()
 New-ADUser -Name $u.Name -SamAccountName $samName -Path $targetOU -Enabled $true -ChangePasswordAtLogon $true
 
 
 ## 2. Tarkvara tsentraalne paigaldus (GPO)
-Tarkvara haldamiseks seadistasin serveris võrgujagamise ja lõin arvutipõhised GPO-d.
+Tarkvara haldamiseks seadistasin serveris võrgujagamise ja arvutipõhised GPO-d.
 ## Ettevalmistus:
 
-* Lõin kausta C:\Deploy ja jagasin selle võrgus (\\DC1\Deploy).
+* Tegin kausta C:\Deploy ja jagasin selle võrgus (\\DC1\Deploy).
 * Andsin Domain Computers grupile Read õigused nii jagamise kui ka NTFS tasemel.
 
 ## GPO seadistused:
@@ -65,25 +65,25 @@ Tarkvara haldamiseks seadistasin serveris võrgujagamise ja lõin arvutipõhised
 Märkus: LibreOffice MSI-faili muutmiseks kasutasin tarkvara Orca, et eemaldada keelevalikutest tulenevad paigaldusvead.
 
 ## 3. Kasutajate töökeskkonna reeglid
-Lõin GPO-d, mis määravad kasutajate seaded sõltumata arvutist, kuhu nad sisse logivad.
+Seadistasin GPO-d, mis määravad kasutajate seaded sõltumata arvutist, kuhu nad sisse logivad.
 ## 3.1 Google Chrome'i avaleht
 
    1. Lisasin Google Chrome'i ADMX/ADML haldusmallid serveri PolicyDefinitions kausta.
-   2. Lõin GPO "Veebilehe avaleht" ja linkisin selle üksusele KASUTAJAD.
+   2. Tegin GPO "Veebilehe avaleht" ja linkisin selle üksusele KASUTAJAD.
    3. Seadistasin: User Configuration -> Administrative Templates -> Google Chrome -> Configure the home page URL väärtuseks https://hkhk.edu.ee.
 
-## 3.2 Ettevõtte taustapilt
+## 3.2 Taustapilt
 
-   1. Lõin GPO "Taustapilt" ja linkisin selle üksusele KASUTAJAD.
+   1. Tegin GPO "Taustapilt" ja linkisin selle üksusele KASUTAJAD.
    2. Seadistasin: User Configuration -> Desktop -> Desktop -> Desktop Wallpaper.
    3. Määrasin pildi asukohaks võrgutee \\DC1\Deploy\taustapilt.jpg ja stiiliks Fill.
 
 
 ## 4. Turvaseadistused
-Rakendasin kriitilised turvameetmed, et kaitsta domeeni kasutajaandmeid.
+Rakendasin turvameetmed, et kaitsta domeeni kasutajaandmeid.
 ## 4.1 Viimase sisselogitud kasutaja peitmine
 
-   1. Lõin GPO "Peida kasutaja" ja linkisin selle üksusele ARVUTID.
+   1. Tegin GPO "Peida kasutaja" ja linkisin selle üksusele ARVUTID.
    2. Seadistasin: Computer Configuration -> Security Settings -> Local Policies -> Security Options -> Interactive logon: Don't display last signed-in: Enabled.
 
 ## 4.2 Turvaline paroolipoliitika
