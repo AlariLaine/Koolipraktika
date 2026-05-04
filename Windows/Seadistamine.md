@@ -30,7 +30,7 @@ Esimene klientmasin (**Klient1**) sai edukalt domeeni liidetud:
    - Kinnitasin `Administrator` kontoga.
    - Masin on nähtav AD "Computers" konteineris.
 
-## 5. Group Policy (GPO),Siin on täielik, professionaalne ja GitHubi-valmis dokumentatsioon Markdown vormingus. See on koostatud "mina"-vormis juhendina, sisaldades kõiki Sinu poolt tehtud samme alates skriptimisest kuni võrguseadistusteni.
+## 5. Group Policy (GPO)
 
 ## Windows Serveri haldus: Kasutajate import, GPO ja võrguseadistus
 Käesolev dokumentatsioon kirjeldab minu poolt teostatud Windows Serveri keskkonna seadistamist. Projekti eesmärk oli automatiseerida kasutajate loomine, seadistada tsentraalne tarkvara paigaldus läbi grupipoliitikate (GPO) ja tagada turvaline võrgupääs.
