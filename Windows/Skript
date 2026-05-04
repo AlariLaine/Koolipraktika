@@ -1,1 +1,83 @@
 
+# 1. SEADISTUS - Muuda siin oma domeeni nimi!
+$domainPath = "DC=alari,DC=praktika"
+$dnsDomain = "alari.praktika"
+$csvPath = "C:\Users\Administrator\Downloads\kasutajad.csv"
+
+# 2. OU STRUKTUURI LOOMINE
+# Määrame hierarhia (Vanem-OU peab olema nimekirjas eespool)
+$ous = @(
+    "OU=ARVUTID,$domainPath",
+    "OU=Staff,OU=ARVUTID,$domainPath",
+    "OU=Töötajad,OU=ARVUTID,$domainPath",
+    "OU=KASUTAJAD,$domainPath",
+    "OU=IT,OU=KASUTAJAD,$domainPath",
+    "OU=Staff,OU=KASUTAJAD,$domainPath",
+    "OU=Töötajad,OU=KASUTAJAD,$domainPath",
+    "OU=Kontor,OU=KASUTAJAD,$domainPath",
+    "OU=Raamatupidamine,OU=KASUTAJAD,$domainPath"
+)
+
+Write-Host "--- 1. OU-de kontroll ja loomine ---" -ForegroundColor Cyan
+foreach ($ou in $ous) {
+    if (-not (Get-ADOrganizationalUnit -Filter "DistinguishedName -eq '$ou'" -ErrorAction SilentlyContinue)) {
+        $name = ($ou.Split(',')[0]).Split('=')[1]
+        $path = $ou.Substring($ou.IndexOf(',') + 1)
+        New-ADOrganizationalUnit -Name $name -Path $path
+        Write-Host "Loodi OU: $name" -ForegroundColor Green
+    }
+}
+
+# 3. KASUTAJATE IMPORT
+if (Test-Path $csvPath) {
+    $users = Import-Csv $csvPath -Delimiter ","
+   
+    Write-Host "`n--- 2. Kasutajate ja gruppide kontroll ---" -ForegroundColor Cyan
+    foreach ($u in $users) {
+        # Loome sisselogimisnime kujul eesnimi.perenimi (isegi kui CSV-s on teisiti)
+        $cleanName = $u.Name.Trim()
+        $nameParts = $cleanName.Split(' ')
+        $firstName = $nameParts[0]
+        $lastName = $nameParts[-1]
+        $samName = "$($firstName).$($lastName)".ToLower()
+        
+        $targetOU = "OU=$($u.OU),OU=KASUTAJAD,$domainPath"
+
+        # A) KONTROLLI GRUPPI (Loome grupi iga OU jaoks, et hallata liikmeid)
+        $groupName = "G_$(($u.OU))"
+        if (-not (Get-ADGroup -Filter "Name -eq '$groupName'" -ErrorAction SilentlyContinue)) {
+            New-ADGroup -Name $groupName -GroupScope Global -Path "OU=KASUTAJAD,$domainPath"
+            Write-Host "Loodi turvagrupp: $groupName" -ForegroundColor Yellow
+        }
+
+        # B) KONTROLLI OU OLEMASOLU
+        if (Get-ADOrganizationalUnit -Filter "DistinguishedName -eq '$targetOU'" -ErrorAction SilentlyContinue) {
+           
+            # C) KONTROLLI KASUTAJAT
+            if (-not (Get-ADUser -Filter "SamAccountName -eq '$samName'" -ErrorAction SilentlyContinue)) {
+               
+                $securePass = ConvertTo-SecureString $u.Password -AsPlainText -Force
+               
+                New-ADUser -Name $cleanName `
+                           -DisplayName $cleanName `
+                           -GivenName $firstName `
+                           -Surname $lastName `
+                           -SamAccountName $samName `
+                           -UserPrincipalName "$samName@$dnsDomain" `
+                           -AccountPassword $securePass `
+                           -Path $targetOU `
+                           -Enabled $true `
+                           -ChangePasswordAtLogon $true
+               
+                Add-ADGroupMember -Identity $groupName -Members $samName
+                Write-Host "Loodud: $samName -> $targetOU" -ForegroundColor Green
+            } else {
+                Write-Host "Olemas: $samName jääb vahele." -ForegroundColor Gray
+            }
+        } else {
+            Write-Warning "VIGA: OU-d $targetOU ei eksisteeri! Kontrolli CSV-d."
+        }
+    }
+} else {
+    Write-Error "Faili $csvPath ei leitud!"
+}
