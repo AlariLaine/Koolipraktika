@@ -43,8 +43,8 @@ Kõigepealt tegin PowerShell skripti, mis loob vajaliku organisatsiooniüksuste 
    3. Gruppide haldus: Skript kontrollib automaatselt OU olemasolu enne kasutaja loomist ja lisab kasutaja vastavasse üksusesse.
 
 ## Kasutatud loogika näide
-$samName = "$($firstName).$($lastName)".ToLower()
-New-ADUser -Name $u.Name -SamAccountName $samName -Path $targetOU -Enabled $true -ChangePasswordAtLogon $true
+"$samName = "$($firstName).$($lastName)".ToLower()
+New-ADUser -Name $u.Name -SamAccountName $samName -Path $targetOU -Enabled $true -ChangePasswordAtLogon $true"
 
 
 ## 2. Tarkvara tsentraalne paigaldus (GPO)
